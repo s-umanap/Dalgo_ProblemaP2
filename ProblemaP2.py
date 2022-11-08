@@ -18,10 +18,11 @@ class pandora:
                     #ord() devuelve el valor unicode de un caracter y chr() devuelve el caracter de un valor unicode 
 
                     break #salimos del ciclo
-    
+            
         visited=[0]*K #creamos una lista de K elementos con valor 0 para crear un grafo donde cada letra del alfabeto es un nodo y sus conexiones son las aristas
         #0: no visitado 1: visitado 2: terminado, esto nos facilitara la busqueda de ciclos y realizar dfs para encontrar el orden topologico del grafo.
-        
+
+
         #funcion para buscar el orden topologico con dfs y detectar ciclos utilizando una cola
         for i in range(K): #recorremos las letras del alfabeto
             for j in adj[i]: #recorremos las adyacencias de cada letra
@@ -43,24 +44,29 @@ class pandora:
                 if visited[j]==0: #si la letra no tiene adyacencias
                     cola_de_letras.append(j) #agregamos la letra a la cola de letras
         
-        letras_ordenadas=[] #creamos una lista para guardar las letras ordenadas
+        ocupadas= [] #creamos una lista para guardar las letras que si se usan, y no tener todo el alfabeto
 
-        letras_sin_repetir=[] #creamos una lista para guardar las letras sin repetir
-        for x in palabras:
-            for y in x:
-                if y not in letras_sin_repetir:
-                    letras_sin_repetir.append(y)
-    
+        #revisamos las letras que se usan, mirando si tienen adyacencias y mirando las adyacencias de las letras que tienen adyacencias
+        for i in range(len(adj)):#recorremos las adyacencias
+            if len(adj[i])>0: #si la letra tiene adyacencias
+                if i not in ocupadas: #si la letra no esta en la lista de ocupadas
+                    ocupadas.append(i) #agregamos la letra a la lista de ocupadas
+                for j in adj[i]: #recorremos las adyacencias de la letra
+                    if j not in ocupadas: #si la letra no esta en la lista de ocupadas
+                        ocupadas.append(j) #agregamos la letra a la lista de ocupadas
+
+
+        letras_ordenadas=[] #creamos una lista para guardar las letras ordenadas
         for i in orden_topo_letras: #recorremos el orden topologico
-            if chr(i+ord("a")) in letras_sin_repetir: #si la letra esta en la lista de letras sin repetir
+            if i in ocupadas:
                 letras_ordenadas.append(chr(i+ord("a"))) #agregamos las letras ordenadas a la lista de letras ordenadas
 
         cadena_resultante = "".join(letras_ordenadas) #retornamos las letras ordenadas
 
-        if len(cadena_resultante) < len(letras_sin_repetir):
-            return "ERROR"
+        if len(cadena_resultante) < len(ocupadas): #si la longitud de la cadena resultante es menor a la longitud de las letras ocupadas
+            return "ERROR" #retornamos error
         else:
-            return cadena_resultante
+            return cadena_resultante #retornamos la cadena resultante
 
 
 print(pandora.alfabeto_de_pandora(pandora,["h","hjh","hjmh","hm","j","jjm","m","mh","mmhj"]))
