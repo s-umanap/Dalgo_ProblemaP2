@@ -9,7 +9,8 @@ import java.util.Set;
 class ProblemaP2 {
     public String findOrder(String[] words) {
         Map<Character, Set<Character>> graph = new HashMap<>(); //lista de adyacencia   
-        int[] inDegree = new int[26]; //grado de entrada de cada vertice
+        int[] inDegree = new int[26]; //grado de entrada de cada vertice utilizando el codigo ASCII de cada letra
+        System.out.println(inDegree);
         buildGraph(graph, inDegree, words); //construimos el grafo
         return bfs(graph, inDegree); //hacemos BFS para encontrar el orden de las letras
     }
@@ -20,7 +21,7 @@ class ProblemaP2 {
         {
             for (char charVertex : Chars.toCharArray()) // agregar todos los caracteres a la lista de adyacencia
             {
-                graph.putIfAbsent(charVertex, new HashSet<>()); // si no existe el vertice, lo agrega recordando que cada letra es un vertice
+                graph.putIfAbsent(charVertex, new HashSet<>()); // si no existe el vertice, lo agrega recordando que cada letra es un vertice y se le pone un set para los vertices adyacentes
             }
         }
 
@@ -46,7 +47,7 @@ class ProblemaP2 {
                 if (j + 1 == minLen && String1.length() > String2.length()) // si la palabra anterior es mayor que la actual
                 {
                     graph.clear(); //se limpia el grafo
-                    return; //se retorna
+                    return;
                 }
             }
         }
@@ -54,7 +55,7 @@ class ProblemaP2 {
 
     private String bfs(Map<Character, Set<Character>> graph, int[] inDegree) // metodo que usaremos para el bfs
     {
-        StringBuilder sb = new StringBuilder(); //se crea un stringbuilder para almacenar el orden de las letras
+        StringBuilder stringBuilder = new StringBuilder(); //se crea un stringbuilder para almacenar el orden de las letras
         Queue<Character> queue = new LinkedList<>(); //se crea una cola para almacenar los vertices
         for (char vertex : graph.keySet()) //se recorre el grafo por sus vertices
         { 
@@ -67,7 +68,7 @@ class ProblemaP2 {
         while (!queue.isEmpty()) //mientras la cola no esté vacía
         { 
             char VertexOut = queue.poll(); //se saca el primer elemento de la cola
-            sb.append(VertexOut); //se agrega al stringbuilder
+            stringBuilder.append(VertexOut); //se agrega al stringbuilder
             for (char VertexIN : graph.get(VertexOut)) //se recorre el grafo por sus vertices
             { 
                 inDegree[VertexIN - 'a']--; //se disminuye el grado de entrada del vertice
@@ -77,8 +78,17 @@ class ProblemaP2 {
                 }
             } 
         }
+        if (stringBuilder.length() != graph.size()) //si el tamaño del stringbuilder es diferente al tamaño del grafo
+        {
+            return "ERROR"; //se retorna ERROR
+            //esto implica que encontró un orden de las letras que no es posible y que no utiliza todas las letras
+        }
+        else 
+        {
+            return stringBuilder.toString(); //se retorna el stringbuilder conviertiendolo a string
+        }
 
-        return sb.length() == graph.size() ? sb.toString() : "ERROR"; // si el tamaño del stringbuilder es igual al tamaño del grafo, es decir que no hay letras que no estén relacionadas, se retorna el stringbuilder, de lo contrario se retorna ERROR
+       
     }
 
 
