@@ -8,6 +8,11 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Set;
 
+//Integrantes:  Juan Pablo Lora Hernández – 202012524 
+
+//               Cristian David Caro Blanco – 202011710 
+
+//               Sebastián Alberto Umaña Peinado – 202013778 
 
 class ProblemaP2 { 
     public String findOrder(String[] words) { // O(n) 
