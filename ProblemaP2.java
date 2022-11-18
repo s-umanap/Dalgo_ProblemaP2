@@ -9,88 +9,15 @@ import java.util.HashMap;
 import java.util.Set;
 
 
-class ProblemaP2 {
-	public void lectura(String archivo ) {
-		ProblemaP2 instancia = new ProblemaP2();
-		try ( 
-			InputStreamReader is= new InputStreamReader(System.in);
-			BufferedReader br = new BufferedReader(is);
-		) { 
-			String line = br.readLine();
-			//"num"
-			int casos = Integer.parseInt(line);
-			//line = br.readLine();
-			for(int i=0;i<casos && line!=null && line.length()>0 && !"0".equals(line);i++) {
-				line = br.readLine();
-				//"num" "num" 
-				String[] pairs;
-				Map<String,String[]> mapa= new HashMap<>();
-				String[] sub= line.split(" ");
-				int fils= Integer.parseInt(sub[0]);
-				int cols= Integer.parseInt(sub[1]);
-				if(fils!=0 && cols !=0){
-					pairs=new String[fils*cols];
-					for (int j=0;j<fils;j++){
-						line=br.readLine();
-						String[] mapear=line.split(" ");
-						//"num" "str" "str" "str" "str"
-						String[] valor= new String[cols];
-						for(int k=1;k<mapear.length;k++) {
-							valor[k-1]=mapear[k];
-						}
-						mapa.put(mapear[0],valor);
-					}
-					for (int p=0;p<mapa.size();p++){//recorrer mapa
-						if(mapa.containsKey(Integer.toString(p))){
-							for(int x=0;x<mapa.get(Integer.toString(p)).length;x++){//recorrer list
-								if(mapa.get(Integer.toString(p))!=null) {
-									int pos=0;
-									for(int nll=0; nll < pairs.length; nll++){
-										if(pairs[nll]==null) {
-											pos=nll;
-											break;
-										}
-									}
-									pairs[pos]=mapa.get(Integer.toString(p))[x];
-								}
-							}
-						}
-						else {
-							//error pasando de map-list
-							System.out.println("ERROR PASANDO MAP-LIST");
-							break;
-						}
-					}
-					//RTA
-					System.out.println(instancia.findOrder(pairs));
-					
-					
-					/*
-					for (int y=0; y<pairs.length;y++) {
-						System.out.println(y);
-						System.out.println(pairs[y]);
-					}
-					*/
-				}
-				else {
-					System.out.println("ERROR");
-				}
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			System.out.println("ERROR");
-			e.printStackTrace();
-		}
-	}
-    public String findOrder(String[] words) {
-        Map<Character, Set<Character>> graph = new HashMap<>(); //lista de adyacencia   
+class ProblemaP2 { 
+    public String findOrder(String[] words) { // O(n) 
         int[] inDegree = new int[26]; //grado de entrada de cada vertice utilizando el codigo ASCII de cada letra
-        
+		Map<Character, Set<Character>> graph = new HashMap<>(); //lista de adyacencia  
         buildGraph(graph, inDegree, words); //construimos el grafo
         return bfs(graph, inDegree); //hacemos BFS para encontrar el orden de las letras
     }
 
-    private void buildGraph(Map<Character, Set<Character>> graph, int[] inDegree, String[] words) //metodo para construir el grafo
+    private void buildGraph(Map<Character, Set<Character>> graph, int[] inDegree, String[] words) //metodo para construir el grafo O(n)-> n = vertices
      {
         for (String Chars : words) // agregar todos los caracteres a la lista de adyacencia
         {
@@ -103,7 +30,7 @@ class ProblemaP2 {
         for (int i = 1; i < words.length; i++) //se recorre en la longitud de las palabras
         {
             //se comparan 2 palabras para ver si hay una relacion entre ellas, de forma que se hace letra por letra
-            String String1 = words[i - 1]; //palabra anterior
+            String String1 = words[i-1]; //palabra anterior
             String String2 = words[i]; //palabra actual
             int minLen = Math.min(String1.length(), String2.length()); //obtenemos el minimo de caracteres entre las dos palabras
             for (int j = 0; j < minLen; j++)
@@ -115,7 +42,7 @@ class ProblemaP2 {
                     if (!graph.get(s1FirstChar).contains(S2FirstChar)) // si no existe una relacion entre los caracteres 
                     {
                         graph.get(s1FirstChar).add(S2FirstChar); //se agrega la relacion entre los caracteres
-                        inDegree[S2FirstChar - 'a']++; //se aumenta el grado de entrada del caracter
+                        inDegree[S2FirstChar-'a']++; //se aumenta el grado de entrada del caracter
                     }
                     break; //se rompe el ciclo para pasar a la siguiente palabra
                 }
@@ -127,14 +54,12 @@ class ProblemaP2 {
             }
         }
     }
-
-    private String bfs(Map<Character, Set<Character>> graph, int[] inDegree) // metodo que usaremos para el bfs
-    {
+    private String bfs(Map<Character, Set<Character>> graph, int[] inDegree){ //metodo para hacer BFS O(n+e) -> n = vertices
         StringBuilder stringBuilder = new StringBuilder(); //se crea un stringbuilder para almacenar el orden de las letras
         Queue<Character> queue = new LinkedList<>(); //se crea una cola para almacenar los vertices
         for (char vertex : graph.keySet()) //se recorre el grafo por sus vertices
         { 
-            if (inDegree[vertex - 'a'] == 0) //si el grado de entrada es 0, es decir que no tiene ninguna relacion con otro vertice
+            if (inDegree[vertex-'a'] == 0) //si el grado de entrada es 0, es decir que no tiene ninguna relacion con otro vertice
             { 
                 queue.offer(vertex); //se agrega a la cola
             }
@@ -146,8 +71,8 @@ class ProblemaP2 {
             stringBuilder.append(VertexOut); //se agrega al stringbuilder
             for (char VertexIN : graph.get(VertexOut)) //se recorre el grafo por sus vertices
             { 
-                inDegree[VertexIN - 'a']--; //se disminuye el grado de entrada del vertice
-                if (inDegree[VertexIN - 'a'] == 0) //si el grado de entrada es 0, es decir que no tiene ninguna relacion con otro vertice
+                inDegree[VertexIN-'a']--; //se disminuye el grado de entrada del vertice
+                if (inDegree[VertexIN- 'a'] == 0) //si el grado de entrada es 0, es decir que no tiene ninguna relacion con otro vertice
                 { 
                     queue.offer(VertexIN); //se agrega a la cola
                 }
@@ -156,33 +81,48 @@ class ProblemaP2 {
         if (stringBuilder.length() != graph.size()) //si el tamaÃ±o del stringbuilder es diferente al tamaÃ±o del grafo
         {
             return "ERROR"; //se retorna ERROR
-            //esto implica que encontrÃ³ un orden de las letras que no es posible y que no utiliza todas las letras
+            //esto implica que encontró un orden de las letras que no es posible y que no utiliza todas las letras
         }
         else 
         {
-            return stringBuilder.toString(); //se retorna el stringbuilder conviertiendolo a string
+            return stringBuilder.toString(); //se retorna el stringbuilder conviertiendolo a string 
         }
 
        
     }
+public static void main(String[] args) throws IOException  { 
+	ProblemaP2 instance = new ProblemaP2();
+	try (  //se crea un try con recursos para leer el archivo
+			InputStreamReader inputReader= new InputStreamReader(System.in); //se crea un lector de entrada
+			BufferedReader Buffered = new BufferedReader(inputReader); // se crea un buffer para leer la entrada
+			) { 
+		String line = Buffered.readLine(); //se lee la primera linea
+		int cases = Integer.parseInt(line); //se convierte a entero
+		line = Buffered.readLine(); //se lee la segunda linea
+		for(int i=0;i<cases && line!=null && line.length()>0 ;i++) //se recorre el numero de casos
+		{
+			String[] lineStr = line.split("\\s+"); //se separa la linea por espacios
+			int pages_words = Integer.parseInt(lineStr[1]);  //se convierte a entero el numero de palabras por pagina
+			int words_N = Integer.parseInt(lineStr[0]); //se convierte a entero el numero de palabras
+			String[] words= new String[words_N*pages_words]; //se crea un arreglo de palabras
+			for(int j=0;j<words_N ;j++) //se recorre el numero de palabras
+			{
+				line = Buffered.readLine(); //se lee la linea
+				String[] page = line.split("\\s+"); //se separa la linea por espacios
+				int NumberPage = Integer.parseInt(page[0]); //se convierte a entero el numero de pagina
+				for(int k=0;k<pages_words ;k++) //se recorre el numero de palabras por pagina
+				 {
+					words[(NumberPage*pages_words)+(k)]=page[k+1]; // se agrega la palabra al arreglo de palabras
+				}
+			}
+			System.out.println(instance.findOrder(words)); //se imprime el resultado del metodo findOrder con el arreglo de palabras como parametro
+			line = Buffered.readLine(); //se lee la siguiente linea
+		}
 
+	} catch (IOException e) { //se atrapa la excepcion
+		System.out.println("ERROR"); //se imprime ERROR
+		e.printStackTrace(); //se imprime la pila de errores
 
-public static void main(String[] args) {
-	ProblemaP2 p = new ProblemaP2();
-	p.lectura("D:\\Programación\\DALGO\\Dalgo_ProblemaP2\\P2.in");
-	/*
-	String[] dict1 = {"h","hjh","hjmh","hm","j","jjm","m","mh","mmhj"};
-	String[] dict3 = {"ab","ac","cc","cb"};
-	String[] dict2 = {"xx", "xp", "pj", "jjj" ,"jjw"};
-	String[] dict4 = {"ab" ,"ah","an" ,"mn" ,"mk"};
-	
-	long inicio = System.currentTimeMillis();
-	System.out.println(p.findOrder(dict1));
-	System.out.println(p.findOrder(dict2));
-	System.out.println(p.findOrder(dict3));
-	System.out.println(p.findOrder(dict4));
-	long fin = System.currentTimeMillis();
-	System.out.println("Tiempo: " + (fin - inicio) + " ms");
-	*/
 	} 
+}
 }
