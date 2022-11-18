@@ -2,15 +2,90 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Set;
 
 
 class ProblemaP2 {
+	public void lectura(String archivo ) {
+		ProblemaP2 instancia = new ProblemaP2();
+		try ( 
+			InputStreamReader is= new InputStreamReader(System.in);
+			BufferedReader br = new BufferedReader(is);
+		) { 
+			String line = br.readLine();
+			//"num"
+			int casos = Integer.parseInt(line);
+			//line = br.readLine();
+			for(int i=0;i<casos && line!=null && line.length()>0 && !"0".equals(line);i++) {
+				line = br.readLine();
+				//"num" "num" 
+				String[] pairs;
+				Map<String,String[]> mapa= new HashMap<>();
+				String[] sub= line.split(" ");
+				int fils= Integer.parseInt(sub[0]);
+				int cols= Integer.parseInt(sub[1]);
+				if(fils!=0 && cols !=0){
+					pairs=new String[fils*cols];
+					for (int j=0;j<fils;j++){
+						line=br.readLine();
+						String[] mapear=line.split(" ");
+						//"num" "str" "str" "str" "str"
+						String[] valor= new String[cols];
+						for(int k=1;k<mapear.length;k++) {
+							valor[k-1]=mapear[k];
+						}
+						mapa.put(mapear[0],valor);
+					}
+					for (int p=0;p<mapa.size();p++){//recorrer mapa
+						if(mapa.containsKey(Integer.toString(p))){
+							for(int x=0;x<mapa.get(Integer.toString(p)).length;x++){//recorrer list
+								if(mapa.get(Integer.toString(p))!=null) {
+									int pos=0;
+									for(int nll=0; nll < pairs.length; nll++){
+										if(pairs[nll]==null) {
+											pos=nll;
+											break;
+										}
+									}
+									pairs[pos]=mapa.get(Integer.toString(p))[x];
+								}
+							}
+						}
+						else {
+							//error pasando de map-list
+							System.out.println("ERROR PASANDO MAP-LIST");
+							break;
+						}
+					}
+					//RTA
+					System.out.println(instancia.findOrder(pairs));
+					
+					
+					/*
+					for (int y=0; y<pairs.length;y++) {
+						System.out.println(y);
+						System.out.println(pairs[y]);
+					}
+					*/
+				}
+				else {
+					System.out.println("ERROR");
+				}
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			System.out.println("ERROR");
+			e.printStackTrace();
+		}
+	}
     public String findOrder(String[] words) {
         Map<Character, Set<Character>> graph = new HashMap<>(); //lista de adyacencia   
         int[] inDegree = new int[26]; //grado de entrada de cada vertice utilizando el codigo ASCII de cada letra
-        System.out.println(inDegree);
+        
         buildGraph(graph, inDegree, words); //construimos el grafo
         return bfs(graph, inDegree); //hacemos BFS para encontrar el orden de las letras
     }
@@ -65,7 +140,7 @@ class ProblemaP2 {
             }
         }
 
-        while (!queue.isEmpty()) //mientras la cola no esté vacía
+        while (!queue.isEmpty()) //mientras la cola no estÃ© vacÃ­a
         { 
             char VertexOut = queue.poll(); //se saca el primer elemento de la cola
             stringBuilder.append(VertexOut); //se agrega al stringbuilder
@@ -78,10 +153,10 @@ class ProblemaP2 {
                 }
             } 
         }
-        if (stringBuilder.length() != graph.size()) //si el tamaño del stringbuilder es diferente al tamaño del grafo
+        if (stringBuilder.length() != graph.size()) //si el tamaÃ±o del stringbuilder es diferente al tamaÃ±o del grafo
         {
             return "ERROR"; //se retorna ERROR
-            //esto implica que encontró un orden de las letras que no es posible y que no utiliza todas las letras
+            //esto implica que encontrÃ³ un orden de las letras que no es posible y que no utiliza todas las letras
         }
         else 
         {
@@ -92,20 +167,22 @@ class ProblemaP2 {
     }
 
 
-
 public static void main(String[] args) {
-ProblemaP2 p = new ProblemaP2();
-String[] dict1 = {"h","hjh","hjmh","hm","j","jjm","m","mh","mmhj"};
-String[] dict3 = {"ab","ac","cc","cb"};
-String[] dict2 = {"xx", "xp", "pj", "jjj" ,"jjw"};
-String[] dict4 = {"ab" ,"ah","an" ,"mn" ,"mk"};
-
-long inicio = System.currentTimeMillis();
-System.out.println(p.findOrder(dict1));
-System.out.println(p.findOrder(dict2));
-System.out.println(p.findOrder(dict3));
-System.out.println(p.findOrder(dict4));
-long fin = System.currentTimeMillis();
-System.out.println("Tiempo: " + (fin - inicio) + " ms");
-    } 
+	ProblemaP2 p = new ProblemaP2();
+	p.lectura("D:\\Programación\\DALGO\\Dalgo_ProblemaP2\\P2.in");
+	/*
+	String[] dict1 = {"h","hjh","hjmh","hm","j","jjm","m","mh","mmhj"};
+	String[] dict3 = {"ab","ac","cc","cb"};
+	String[] dict2 = {"xx", "xp", "pj", "jjj" ,"jjw"};
+	String[] dict4 = {"ab" ,"ah","an" ,"mn" ,"mk"};
+	
+	long inicio = System.currentTimeMillis();
+	System.out.println(p.findOrder(dict1));
+	System.out.println(p.findOrder(dict2));
+	System.out.println(p.findOrder(dict3));
+	System.out.println(p.findOrder(dict4));
+	long fin = System.currentTimeMillis();
+	System.out.println("Tiempo: " + (fin - inicio) + " ms");
+	*/
+	} 
 }
