@@ -121,7 +121,6 @@ public static void main(String[] args) throws IOException  {
 
 	} catch (IOException e) { //se atrapa la excepcion
 		System.out.println("ERROR"); //se imprime ERROR
-		e.printStackTrace(); //se imprime la pila de errores
 
 	} 
 }
